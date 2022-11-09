@@ -21,6 +21,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
         const serviceCollection = client.db('gamingStore').collection('services');
+        const reviewsCollection = client.db('gamingStore').collection('reviews');
 
         app.get('/services', async(req, res) =>{
             const query ={}
@@ -35,6 +36,20 @@ async function run(){
             const service = await serviceCollection.findOne(query);
             res.send(service);
         });
+
+        //reviews api
+        app.post('/reviews', async(req, res)=>{
+            const review = req.body;
+            const result = await reviewsCollection.insertOne(review);
+            res.send(result);
+        })
+
+        app.get('/reviewlist', async(req, res)=>{
+            const query = {};
+            const cursor = reviewsCollection.find(query)
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        })
     }
     finally{
 
@@ -44,23 +59,10 @@ async function run(){
 run().catch(err => console.error(err));
 
 
-
-// const categories = require('./data/category.json')
-// const data = require ('./data/data.json')
-
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
-// app.get('/services', (req, res) =>{
-//     res.send(data)
-// })
-// app.get('/courses/:id', (req, res) =>{
-//     const id = req.params.id;
-//     const categoryFullDetails = data.filter(
-//         (n) => n.id === id
-//     );
-//     res.send(categoryFullDetails)
-// }) 
+
 app.listen(port, () => {
     console.log('Example app listening on port', port)
 })
