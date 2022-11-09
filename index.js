@@ -44,11 +44,28 @@ async function run(){
             res.send(result);
         })
 
-        app.get('/reviewlist', async(req, res)=>{
-            const query = {};
+        app.get('/reviews', async(req, res)=>{
+            let query ={};
+            if(req.query.service){
+                query={
+                    service: req.query.service
+                }
+            }
             const cursor = reviewsCollection.find(query)
             const reviews = await cursor.toArray();
             res.send(reviews);
+        })
+
+        app.get('/myreviews', async(req, res)=>{
+            let query ={};
+            if(req.query.email){
+                query={
+                    email: req.query.email
+                }
+            }
+            const cursor = reviewsCollection.find(query)
+            const myReview = await cursor.toArray();
+            res.send(myReview);
         })
     }
     finally{
