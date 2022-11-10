@@ -96,7 +96,13 @@ async function run(){
             res.send(result);
         })
 
-        app.get('/reviews', async(req, res)=>{
+        app.get('/reviews', verifyJWT, async(req, res)=>{
+            const decoded = req.decoded;
+            
+            if(decoded.service !== req.query.service){
+                res.status(403).send({message: 'unauthorized access'})
+            }
+            
             let query ={};
             if(req.query.service){
                 query={
