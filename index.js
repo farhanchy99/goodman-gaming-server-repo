@@ -25,10 +25,30 @@ async function run(){
 
         app.get('/services', async(req, res) =>{
             const query ={}
-            const cursor = serviceCollection.find(query);
+            const cursor = serviceCollection.find(query)
             const services = await cursor.toArray();
             res.send(services);
         });
+        app.post('/services', async(req, res)=>{
+            const addService = req.body;
+            const showService = await serviceCollection.insertOne(addService);
+            res.send(showService);
+        })
+
+        app.get('/myservices', async(req, res)=>{
+            let query ={};
+            if(req.query.email){
+                query={
+                    email: req.query.email
+                }
+            }
+            const cursor = serviceCollection.find(query)
+            .sort({
+                time:-1
+            })
+            const userSer = await cursor.toArray();
+            res.send(userSer);
+        })
 
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
@@ -52,6 +72,9 @@ async function run(){
                 }
             }
             const cursor = reviewsCollection.find(query)
+            .sort({
+                time:-1
+            })
             const reviews = await cursor.toArray();
             res.send(reviews);
         })
@@ -67,6 +90,14 @@ async function run(){
             const myReview = await cursor.toArray();
             res.send(myReview);
         })
+
+        app.delete('/reviews/:id'), async(req,res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await reviewsCollection.deleteOne(query);
+            res.send(result);
+            console.log(result)
+        }
     }
     finally{
 
