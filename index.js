@@ -25,7 +25,7 @@ async function run(){
         const serviceCollection = client.db('gamingStore').collection('services');
         const reviewsCollection = client.db('gamingStore').collection('reviews');
 
-
+        //Services DATA
         app.get('/services', async(req, res) =>{
             const query ={}
             const cursor = serviceCollection.find(query)
@@ -38,7 +38,7 @@ async function run(){
             const showService = await serviceCollection.insertOne(addService);
             res.send(showService);
         })
-
+        
         app.get('/myservices', async(req, res)=>{
             let query ={};
             if(req.query.email){
